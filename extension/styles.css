@@ -1,0 +1,60 @@
+.cfp-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  margin-left: 10px;
+  vertical-align: middle;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  white-space: nowrap;
+}
+
+.cfp-pill.cfp-green { background-color: #4CAF50; }
+.cfp-pill.cfp-yellow-green { background-color: #8BC34A; }
+.cfp-pill.cfp-yellow { background-color: #FFC107; color: #000000 !important; text-shadow: none !important; }
+.cfp-pill.cfp-orange { background-color: #FF9800; color: #000000 !important; text-shadow: none !important; }
+.cfp-pill.cfp-red { background-color: #F44336; animation: cfp-pulse 2s infinite; }
+
+.cfp-pill-loading {
+  background-color: #9e9e9e;
+  animation: cfp-pulse 1.5s infinite;
+}
+
+@keyframes cfp-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.cfp-scanner-btn {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0;
+  font-size: 11px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: background-color 0.2s;
+}
+
+.cfp-scanner-btn:hover {
+  background-color: #1976D2;
+}
+
+.cfp-scanner-btn:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+.cfp-scanner-container {
+  text-align: right;
+  margin-bottom: 10px;
+}

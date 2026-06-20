@@ -1,0 +1,36 @@
+name: Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Build Chrome Extension
+        run: |
+          cd extension
+          zip -r ../cf-police-chrome.zip ./*
+
+      - name: Build Firefox Extension
+        run: |
+          cd extension
+          zip -r ../cf-police-firefox.zip ./*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            cf-police-chrome.zip
+            cf-police-firefox.zip
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

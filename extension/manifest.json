@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "CF-Police",
+  "version": "1.0.0",
+  "description": "Codeforces Behavioral Anomaly & Performance Analytics Overlay",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "host_permissions": [
+    "*://codeforces.com/*",
+    "http://localhost:8000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://codeforces.com/profile/*",
+        "*://codeforces.com/contest/*/standings*"
+      ],
+      "css": ["styles.css"],
+      "js": ["engine.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["baseline.json"],
+      "matches": ["*://codeforces.com/*"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "cfpolice@codewithayuu",
+      "strict_min_version": "109.0"
+    }
+  }
+}
