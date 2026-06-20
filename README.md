@@ -110,6 +110,8 @@ Because statistics can be fuzzy, the engine uses strict "Guardrails" to catch ph
 - **Guardrail 1 (Sudden Rank Jump):** Tracks a sliding window of the user's average rank over their last 5 contests. If an established low-rated player (e.g., < 1600) suddenly places in the absolute Top 100 of a Div 1/2 contest, it triggers an instant +5.0 penalty.
 - **Guardrail 2 (Sudden Difficulty Jump):** Tracks historical max difficulty. If a user who has never solved anything harder than a 1200 suddenly submits a flawless solution for a 2500-rated problem during a live contest, any jump > 800 rating points triggers a penalty.
 - **Guardrail 3 (Unrealistic Growth / Speedrun):** Targets "burner" or smurf accounts. If an account has fewer than 15 lifetime contests, the engine calculates their average rating gain per contest. Averaging > 150 points gained per contest consistently flags them as a speedrunner.
+- **Guardrail 4 (Out of League):** Checks live contest performance against an established rating constraint. If an established user with a historical max rating `< 1600` successfully submits a live contest problem that is rated `600+` points higher than their max rating, it calculates the discrepancy and applies a heavy penalty.
+- **Guardrail 5 (Unrated Prodigy):** Flags brand-new accounts with exactly `0` lifetime contests. If an unrated account is somehow successfully solving `1700+` rated problems perfectly in virtual participation or practice, it instantly receives up to a +5.0 penalty.
 
 The final score stacks the maximum triggered `guardrailPenalty` on top of the statistical `rawScore`, clipped between `0.0` and `5.0`.
 
