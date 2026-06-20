@@ -1,0 +1,61 @@
+name: Bump Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      part:
+        description: Version part to bump
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      version:
+        description: Explicit version (overrides part)
+        required: false
+        type: string
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bump Version
+        id: bump
+        run: |
+          CURRENT=$(jq -r '.version' extension/manifest.json)
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            NEW="${{ github.event.inputs.version }}"
+          else
+            IFS='.' read -r MAJ MIN PAT <<< "$CURRENT"
+            case "${{ github.event.inputs.part }}" in
+              major) MAJ=$((MAJ + 1)); MIN=0; PAT=0 ;;
+              minor) MIN=$((MIN + 1)); PAT=0 ;;
+              patch) PAT=$((PAT + 1)) ;;
+            esac
+            NEW="$MAJ.$MIN.$PAT"
+          fi
+          echo "OLD=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "NEW=$NEW" >> "$GITHUB_OUTPUT"
+
+          for f in extension/manifest.json extension/manifest.firefox.json; do
+            jq --arg ver "$NEW" '.version = $ver' "$f" > tmp.json && mv tmp.json "$f"
+          done
+
+      - name: Commit and Tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add extension/manifest.json extension/manifest.firefox.json
+          git commit -m "bump version: ${{ steps.bump.outputs.OLD }} → ${{ steps.bump.outputs.NEW }}"
+          git tag "v${{ steps.bump.outputs.NEW }}"
+          git push origin master --tags
