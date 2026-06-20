@@ -92,6 +92,27 @@ flowchart LR
 | 3.0 – 4.0 | Most Probably Cheated | 🔴 Orange |
 | 4.0 – 5.0 | Cheater | 🔴 Red (pulsing) |
 
+### Under the Hood: The Dual-Layer Engine
+
+The engine relies on a dual-layer architecture, combining **Statistical Distributions** (to measure how anomalous an account is compared to thousands of legitimate users) with **Hard Guardrail Heuristics** (to catch obvious, mathematically impossible cheating patterns).
+
+#### Layer 1: Statistical Features (The "Weirdness" Score)
+The engine fetches a user's entire submission and contest history, calculating several metrics and comparing them against a pre-compiled `baseline.json` containing the true means of legitimate Grandmasters, Masters, and Experts.
+- **SMR (Speed to Milestone Ratio):** Measures how many contests it took to reach their max rating. If a user hits 2400 in just 8 contests, their SMR z-score will be extremely high because legitimate players usually take 60+ contests.
+- **PCRI (Problem Count vs Rating Index):** Counts total unique problems solved. A real Grandmaster has usually grinded 1,500+ problems. Reaching 2300 rating with only 70 problems solved causes this index to spike.
+- **SCRS (Single Contest Rating Spike):** Tracks the absolute maximum rating delta achieved in a single contest recently.
+- **MDS (Max Difficulty Solved):** Scans submission history for the hardest problem successfully solved. A contest rating of 2200 with a historical max solved difficulty of 1400 triggers a massive mismatch flag.
+
+These metrics are normalized into percentiles, weighted (e.g., SMR 20%, SCRS 10%), and combined into a baseline `rawScore`.
+
+#### Layer 2: Guardrail Heuristics (The Rule-Based Catchers)
+Because statistics can be fuzzy, the engine uses strict "Guardrails" to catch physically impossible behavior. Crucially, these only evaluate the user's **last 6 months** of activity to forgive past "smurfs" and prevent false positives.
+- **Guardrail 1 (Sudden Rank Jump):** Tracks a sliding window of the user's average rank over their last 5 contests. If an established low-rated player (e.g., < 1600) suddenly places in the absolute Top 100 of a Div 1/2 contest, it triggers an instant +5.0 penalty.
+- **Guardrail 2 (Sudden Difficulty Jump):** Tracks historical max difficulty. If a user who has never solved anything harder than a 1200 suddenly submits a flawless solution for a 2500-rated problem during a live contest, any jump > 800 rating points triggers a penalty.
+- **Guardrail 3 (Unrealistic Growth / Speedrun):** Targets "burner" or smurf accounts. If an account has fewer than 15 lifetime contests, the engine calculates their average rating gain per contest. Averaging > 150 points gained per contest consistently flags them as a speedrunner.
+
+The final score stacks the maximum triggered `guardrailPenalty` on top of the statistical `rawScore`, clipped between `0.0` and `5.0`.
+
 ---
 
 ## Installation
