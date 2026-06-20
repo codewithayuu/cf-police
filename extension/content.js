@@ -89,19 +89,6 @@ async function injectProfilePill(handle) {
   const titleElem = document.querySelector(".info h1") || document.querySelector("h1");
   if (titleElem) {
     titleElem.appendChild(pill);
-    
-    // Add Report False Positive link for flagged users
-    if (data.score >= 2.0) {
-      const reportLink = document.createElement("a");
-      reportLink.href = `https://github.com/codewithayuu/cf-police/issues/new?title=False+Positive%3A+${handle}&body=**Handle**%3A+${handle}%0A**Score**%3A+${data.score.toFixed(2)}%0A**Label**%3A+${data.label}%0A%0A**Why+do+you+believe+this+is+a+false+positive%3F**%0A`;
-      reportLink.target = "_blank";
-      reportLink.textContent = "Report False Positive";
-      reportLink.style.fontSize = "14px";
-      reportLink.style.marginLeft = "15px";
-      reportLink.style.color = "#888";
-      reportLink.style.textDecoration = "underline";
-      titleElem.appendChild(reportLink);
-    }
   }
 }
 
