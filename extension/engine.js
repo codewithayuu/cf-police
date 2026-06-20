@@ -204,8 +204,9 @@ function evaluateUser(handle, ratingHistory, statusHistory, baseline) {
             const currentRating = ratingHistory[ratingHistory.length - 1].newRating || 0;
             const firstContestTime = ratingHistory[startIndex].ratingUpdateTimeSeconds || 0;
             
-            // Only trigger if their speedrun began within the last 6 months
-            if (currentRating > firstOldRating && firstContestTime > sixMonthsAgo) {
+            // Guardrail 3 natively checks ratingHistory.length <= 15, so it already only applies to smurfs/speedrunners.
+            // We do NOT need a time decay here, otherwise dormant smurfs (created years ago but barely played) bypass it!
+            if (currentRating > firstOldRating) {
                 const numContests = ratingHistory.length - startIndex;
                 const avgGain = (currentRating - firstOldRating) / numContests;
                 if (avgGain >= 150) {
