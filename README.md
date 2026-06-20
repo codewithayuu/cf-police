@@ -18,11 +18,9 @@
     <img src="https://img.shields.io/badge/Firefox-MV3-FF7139?style=flat&logo=firefox&logoColor=white" alt="Firefox">
   </p>
 
-  <!-- Demo GIF Placeholder -->
   <p>
     <img src="https://github.com/codewithayuu/cf-police/raw/master/.github/assets/demo.gif" alt="Demo" width="700">
   </p>
-  <p><em>↑ Demo GIF — replace with an actual screen recording</em></p>
 </div>
 
 ---
