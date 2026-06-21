@@ -47,11 +47,7 @@
       "id": "cfpolice@codewithayuu",
       "strict_min_version": "109.0",
       "data_collection_permissions": {
-        "collect": {
-          "usage_data": false,
-          "technical_data": false,
-          "content_data": false
-        }
+        "required": false
       }
     }
   }
