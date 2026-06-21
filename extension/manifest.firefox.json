@@ -46,16 +46,14 @@
     "gecko": {
       "id": "cfpolice@codewithayuu",
       "strict_min_version": "140.0",
-      "strict_max_version": "9999.0",
       "data_collection_permissions": {
         "required": [
-          "web_content"
+          "technical_data"
         ]
       }
     },
     "gecko_android": {
-      "strict_min_version": "142.0",
-      "strict_max_version": "9999.0"
+      "strict_min_version": "142.0"
     }
   }
 }
