@@ -1,14 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const masterEnable = document.getElementById("masterEnable");
     const hideStandingsCheck = document.getElementById("hideStandingsCheck");
     const disableCaching = document.getElementById("disableCaching");
 
     // Load existing settings
-    chrome.storage.sync.get({ hideStandingsCheck: false, disableCaching: false }, (res) => {
+    chrome.storage.sync.get({ masterEnable: true, hideStandingsCheck: false, disableCaching: false }, (res) => {
+        masterEnable.checked = res.masterEnable;
         hideStandingsCheck.checked = res.hideStandingsCheck;
         disableCaching.checked = res.disableCaching;
     });
 
     // Save on change
+    masterEnable.addEventListener("change", () => {
+        chrome.storage.sync.set({ masterEnable: masterEnable.checked });
+    });
+
     hideStandingsCheck.addEventListener("change", () => {
         chrome.storage.sync.set({ hideStandingsCheck: hideStandingsCheck.checked });
     });

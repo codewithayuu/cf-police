@@ -11,12 +11,17 @@ async function loadBaseline() {
 
 async function fetchFromCF(handle) {
   try {
-    const [ratingRes, statusRes] = await Promise.all([
-      fetch(`https://codeforces.com/api/user.rating?handle=${handle}`),
-      fetch(`https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`)
-    ]);
-
+    const ratingRes = await fetch(
+      `https://codeforces.com/api/user.rating?handle=${handle}`,
+    );
     const ratingData = await ratingRes.json();
+
+    // Sleep 300ms between requests to avoid CF API burst rate limits which ig is causing the blocked by admin error in search
+    await new Promise((r) => setTimeout(r, 300));
+
+    const statusRes = await fetch(
+      `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`,
+    );
     const statusData = await statusRes.json();
 
     if (ratingData.status !== "OK" || statusData.status !== "OK") {
@@ -25,7 +30,7 @@ async function fetchFromCF(handle) {
 
     return {
       rating: ratingData.result || [],
-      status: statusData.result || []
+      status: statusData.result || [],
     };
   } catch (err) {
     console.error("CF API Error:", err);
@@ -52,14 +57,22 @@ async function getScoreLocal(handle) {
   const cfData = await fetchFromCF(handle);
   if (!cfData) return null;
 
-  const res = window.CFPoliceEngine.evaluateUser(handle, cfData.rating, cfData.status, baseline);
-  
+  const res = window.CFPoliceEngine.evaluateUser(
+    handle,
+    cfData.rating,
+    cfData.status,
+    baseline,
+  );
+
   if (!settings.disableCaching) {
     try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), result: res }));
+      localStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({ timestamp: Date.now(), result: res }),
+      );
     } catch (e) {}
   }
-  
+
   return res;
 }
 
@@ -86,7 +99,8 @@ async function injectProfilePill(handle) {
   const pill = createPill(data);
   if (!pill) return;
 
-  const titleElem = document.querySelector(".info h1") || document.querySelector("h1");
+  const titleElem =
+    document.querySelector(".info h1") || document.querySelector("h1");
   if (titleElem) {
     titleElem.appendChild(pill);
   }
@@ -103,7 +117,7 @@ function injectStandingsCheckers() {
   if (!headerRow) return;
   const th = document.createElement("th");
   th.style.width = "180px";
-  
+
   const headerContainer = document.createElement("div");
   headerContainer.style.display = "flex";
   headerContainer.style.gap = "5px";
@@ -113,7 +127,7 @@ function injectStandingsCheckers() {
 
   const titleSpan = document.createElement("span");
   titleSpan.textContent = "CF-Police";
-  
+
   const checkAllBtn = document.createElement("button");
   checkAllBtn.textContent = "Check All";
   checkAllBtn.className = "cfp-scanner-btn";
@@ -137,9 +151,11 @@ function injectStandingsCheckers() {
   const checkButtons = [];
 
   for (const row of rows) {
-    const handleLink = row.querySelector(".contestant-cell a[href^='/profile/']") || row.querySelector("td:nth-child(2) a[href^='/profile/']");
+    const handleLink =
+      row.querySelector(".contestant-cell a[href^='/profile/']") ||
+      row.querySelector("td:nth-child(2) a[href^='/profile/']");
     const td = document.createElement("td");
-    
+
     if (handleLink) {
       const handle = handleLink.textContent.trim();
       let cachedData = null;
@@ -147,12 +163,12 @@ function injectStandingsCheckers() {
         try {
           const cachedStr = localStorage.getItem("cfp_cache_" + handle);
           if (cachedStr) {
-             const parsed = JSON.parse(cachedStr);
-             if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
-                 cachedData = parsed.result;
-             }
+            const parsed = JSON.parse(cachedStr);
+            if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+              cachedData = parsed.result;
+            }
           }
-        } catch(e) {}
+        } catch (e) {}
       }
 
       if (cachedData) {
@@ -162,7 +178,7 @@ function injectStandingsCheckers() {
         const btn = document.createElement("button");
         btn.className = "cfp-scanner-btn";
         btn.textContent = "Check";
-        
+
         const doCheck = async () => {
           btn.disabled = true;
           btn.textContent = "...";
@@ -184,7 +200,7 @@ function injectStandingsCheckers() {
         td.appendChild(btn);
       }
     }
-    
+
     row.appendChild(td);
   }
 
@@ -196,30 +212,31 @@ function injectStandingsCheckers() {
     for (const item of checkButtons) {
       if (!isCheckingAll) break;
       if (item.btn.disabled) continue; // Already checked or checking
-      
+
       let isCached = false;
       if (!settings.disableCaching) {
         try {
           const cachedStr = localStorage.getItem("cfp_cache_" + item.handle);
           if (cachedStr) {
-             const parsed = JSON.parse(cachedStr);
-             if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) isCached = true;
+            const parsed = JSON.parse(cachedStr);
+            if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000)
+              isCached = true;
           }
-        } catch(e) {}
+        } catch (e) {}
       }
-      
+
       const success = await item.doCheck();
-      
+
       if (!success) {
         isCheckingAll = false;
         checkAllBtn.style.display = "block";
         cancelBtn.style.display = "none";
         break;
       }
-      
+
       // Delay only if it wasn't cached to avoid API rate limits
       if (isCheckingAll && !isCached) {
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise((r) => setTimeout(r, 1000));
       }
     }
 
@@ -236,21 +253,32 @@ function injectStandingsCheckers() {
 }
 
 async function init() {
-  await new Promise(r => {
-    chrome.storage.sync.get({ hideStandingsCheck: false, disableCaching: false }, (res) => {
-      settings = res;
-      r();
-    });
+  await new Promise((r) => {
+    chrome.storage.sync.get(
+      { masterEnable: true, hideStandingsCheck: false, disableCaching: false },
+      (res) => {
+        settings = res;
+        r();
+      },
+    );
   });
 
+  if (settings.masterEnable === false) {
+    return; // Completely abort if disabled
+  }
+
   const pathParts = window.location.pathname.split("/");
-  
+
   if (pathParts.length >= 3 && pathParts[1] === "profile") {
     const handle = pathParts[2];
     injectProfilePill(handle);
   }
-  
-  if (pathParts.length >= 4 && pathParts[1] === "contest" && pathParts[3].startsWith("standings")) {
+
+  if (
+    pathParts.length >= 4 &&
+    pathParts[1] === "contest" &&
+    pathParts[3].startsWith("standings")
+  ) {
     if (!settings.hideStandingsCheck) {
       injectStandingsCheckers();
     }
