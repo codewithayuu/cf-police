@@ -1,112 +1,140 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>CF-Police Settings</title>
-  <style>
-    body {
-      width: 250px;
-      padding: 15px;
-      background-color: #1e1e1e;
-      color: #e0e0e0;
-      font-family: Arial, sans-serif;
-    }
-    h2 {
-      margin-top: 0;
-      font-size: 16px;
-      color: #fff;
-      border-bottom: 1px solid #333;
-      padding-bottom: 8px;
-      text-align: center;
-    }
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .setting-label {
-      font-size: 13px;
-    }
-    
-    /* Toggle Switch CSS */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 34px;
-      height: 20px;
-    }
-    .switch input { 
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #444;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 14px;
-      width: 14px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
-    }
-    input:checked + .slider {
-      background-color: #2196F3;
-    }
-    input:checked + .slider:before {
-      transform: translateX(14px);
-    }
-    .footer {
-      font-size: 11px;
-      color: #888;
-      text-align: center;
-      margin-top: 15px;
-    }
-  </style>
-</head>
-<body>
-  <h2>CF-Police Settings</h2>
-  
-  <div class="setting-row" style="background: #333; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
-    <span class="setting-label" style="font-size: 14px; font-weight: bold;">Enable Extension</span>
-    <label class="switch">
-      <input type="checkbox" id="masterEnable">
-      <span class="slider"></span>
-    </label>
-  </div>
-  
-  <div class="setting-row">
-    <span class="setting-label">Hide "Check" in Standings</span>
-    <label class="switch">
-      <input type="checkbox" id="hideStandingsCheck">
-      <span class="slider"></span>
-    </label>
-  </div>
+  <head>
+    <meta charset="utf-8" />
+    <title>CF-Police Settings</title>
+    <style>
+      body {
+        width: 250px;
+        padding: 15px;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+      }
+      h2 {
+        margin-top: 0;
+        font-size: 16px;
+        color: #fff;
+        border-bottom: 1px solid #333;
+        padding-bottom: 8px;
+        text-align: center;
+      }
+      .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .setting-label {
+        font-size: 13px;
+      }
 
-  <div class="setting-row">
-    <span class="setting-label">Disable Local Caching</span>
-    <label class="switch">
-      <input type="checkbox" id="disableCaching">
-      <span class="slider"></span>
-    </label>
-  </div>
-  
-  <div class="setting-row" style="margin-top: 20px; justify-content: center;">
-    <button id="reportBtn" style="width: 100%; padding: 8px; background-color: #f44336; border: none; color: white; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold;">🚨 Report False Positive</button>
-  </div>
-  
-  <div class="footer">Changes apply on next page reload.</div>
+      /* Toggle Switch CSS */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 34px;
+        height: 20px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #444;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: #2196f3;
+      }
+      input:checked + .slider:before {
+        transform: translateX(14px);
+      }
+      .footer {
+        font-size: 11px;
+        color: #888;
+        text-align: center;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>CF-Police Settings</h2>
 
-  <script src="popup.js"></script>
-</body>
+    <div
+      class="setting-row"
+      style="
+        background: #333;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      "
+    >
+      <span class="setting-label" style="font-size: 14px; font-weight: bold"
+        >Enable Extension</span
+      >
+      <label class="switch">
+        <input type="checkbox" id="masterEnable" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-label">Hide "Check" in Standings</span>
+      <label class="switch">
+        <input type="checkbox" id="hideStandingsCheck" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-label">Disable Local Caching</span>
+      <label class="switch">
+        <input type="checkbox" id="disableCaching" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row" style="margin-top: 20px; justify-content: center">
+      <button
+        id="reportBtn"
+        style="
+          width: 100%;
+          padding: 8px;
+          background-color: #f44336;
+          border: none;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: bold;
+        "
+      >
+        🚨 Report Issue
+      </button>
+    </div>
+
+    <div class="footer">Changes apply on next page reload.</div>
+
+    <script src="popup.js"></script>
+  </body>
 </html>
